@@ -57,17 +57,8 @@ public class SerializationDocTestBase {
     //#actorref-serializer
     // Serialize
     // (beneath toBinary)
-    final SerializationInformation info = Serialization.currentTransportInformation().value();
+    String identifier = Serialization.serializedActorPath(theActorRef);
 
-    String identifier;
-
-    // If there is no SerializationInformation,
-    // it means that this Serializer isn't called
-    // within a piece of code that sets it,
-    // so either you need to supply your own,
-    // or simply use the local path.
-    if (info == null) identifier = theActorRef.path().toSerializationFormat();
-    else identifier = Serialization.serializedActorPath(theActorRef);
     // Then just serialize the identifier however you like
 
     // Deserialize
