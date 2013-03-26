@@ -392,10 +392,16 @@ private[akka] trait DefaultSystemMessageQueue { self: Mailbox ⇒
   @tailrec
   final def systemDrain(newContents: LatestFirstSystemMessageList): EarliestFirstSystemMessageList = {
     val currentList = systemQueueGet
-    if (systemQueuePut(currentList, newContents)) currentList.reverse else systemDrain(newContents)
+    currentList.head match {
+      case NoMessage ⇒ new EarliestFirstSystemMessageList(null)
+      case _         ⇒ if (systemQueuePut(currentList, newContents)) currentList.reverse else systemDrain(newContents)
+    }
   }
 
-  def hasSystemMessages: Boolean = systemQueueGet.nonEmpty
+  def hasSystemMessages: Boolean = systemQueueGet.head match {
+    case null | NoMessage ⇒ false
+    case _                ⇒ true
+  }
 
 }
 
